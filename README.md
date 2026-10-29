@@ -6,6 +6,8 @@
 
 ## 安装
 
+也可从 [Releases](https://github.com/magiconline/videoscribe-agent-plugin/releases) 下载含精简运行程序的插件 ZIP，解压后直接导入插件目录；仍需安装下面的外部工具和模型，无需再运行运行包准备脚本。
+
 需要 Apple Silicon Mac、Python 3 和本地 Agent 的 stdio MCP 支持。源码目标 macOS 14，未逐一验证所有系统版本；不提供 Intel 发行包。
 
 ```sh

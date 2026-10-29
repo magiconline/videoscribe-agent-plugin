@@ -2,6 +2,8 @@
 
 Local macOS video-to-transcript tools for agents, with durable asynchronous stdio MCP jobs and an accompanying skill. [中文完整指南](README.md).
 
+The [release ZIP](https://github.com/magiconline/videoscribe-agent-plugin/releases) includes the minimal runtime; source clones use the installer below. Both need external tools and a separate model.
+
 Requires Apple Silicon, Python 3, and external tools:
 
 ```sh
