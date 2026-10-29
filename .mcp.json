@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "videoscribe": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/bin/videoscribe-mcp",
+      "args": []
+    }
+  }
+}

@@ -1,0 +1,15 @@
+runtime/
+dist/
+.venv/
+__pycache__/
+.DS_Store
+.env
+.env.*
+*.log
+*.bin
+*.app/
+*.zip
+jobs/
+auth.json
+*.pem
+*.key
