@@ -7,6 +7,7 @@ import os
 from pathlib import Path, PurePosixPath
 import shutil
 import stat
+import subprocess
 import tempfile
 import urllib.request
 import zipfile
@@ -60,8 +61,14 @@ def main():
                 shutil.copyfile(args.archive, archive)
             else:
                 url = f"https://github.com/{config['repository']}/releases/download/{config['tag']}/{config['asset']}"
-                with urllib.request.urlopen(url, timeout=60) as response, archive.open('wb') as output:
-                    shutil.copyfileobj(response, output)
+                # macOS curl uses system certificate trust; Python.org builds may lack a CA bundle.
+                # Resolve the system/terminal proxy explicitly rather than assuming curl reads macOS settings.
+                host = 'github.com'
+                proxies = urllib.request.getproxies()
+                proxy = '' if urllib.request.proxy_bypass(host) else proxies.get('https', proxies.get('all', ''))
+                subprocess.run(['/usr/bin/curl', '--fail', '--location', '--retry', '3',
+                                '--connect-timeout', '20', '--max-time', '180',
+                                '--proxy', proxy, '--output', str(archive), url], check=True)
             actual = hashlib.sha256(archive.read_bytes()).hexdigest()
             if actual != config['sha256']:
                 raise SystemExit('Runtime SHA-256 mismatch; archive rejected')

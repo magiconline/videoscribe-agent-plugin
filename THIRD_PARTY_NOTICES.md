@@ -11,3 +11,5 @@ Install runtime tools from their respective distributors. Their licenses are ind
 - [Whisper model conversion](https://huggingface.co/ggerganov/whisper.cpp) and [original Whisper](https://github.com/openai/whisper): model files are downloaded separately, not committed or included in the release ZIP.
 
 If you choose to create a fully bundled redistribution, you are responsible for the licenses, notices, corresponding-source requirements and platform signing of the exact third-party builds you include. The public build script deliberately produces a minimal application.
+
+The unmodified Agent Plugins JSON schemas in `schemas/` are Copyright 2026 Vercel, Inc., licensed under Apache-2.0. Their license is included at `schemas/LICENSE-APACHE-2.0.txt`; source and attribution are recorded in `schemas/README.md`.
