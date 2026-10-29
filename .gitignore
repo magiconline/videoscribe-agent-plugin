@@ -13,3 +13,5 @@ jobs/
 auth.json
 *.pem
 *.key
+
+runtime.noindex/

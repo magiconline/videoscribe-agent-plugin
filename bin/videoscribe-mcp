@@ -2,9 +2,12 @@
 set -eu
 plugin_dir=$(CDPATH= cd -- "${0%/*}/.." && pwd)
 app_path=${VIDEOSCRIBE_APP_PATH:-}
-if [ -z "$app_path" ]; then
-  if [ -n "${PLUGIN_DATA:-}" ] && [ -x "$PLUGIN_DATA/runtime/VideoScribe.app/Contents/MacOS/VideoScribeAgent" ]; then
-    app_path="$PLUGIN_DATA/runtime/VideoScribe.app"
+engine_path=${VIDEOSCRIBE_ENGINE_PATH:-}
+if [ -z "$app_path" ] && [ -z "$engine_path" ]; then
+  if [ -n "${PLUGIN_DATA:-}" ] && [ -x "$PLUGIN_DATA/runtime.noindex/VideoScribeEngine/VideoScribeAgent" ]; then
+    engine_path="$PLUGIN_DATA/runtime.noindex/VideoScribeEngine"
+  elif [ -x "$plugin_dir/runtime.noindex/VideoScribeEngine/VideoScribeAgent" ]; then
+    engine_path="$plugin_dir/runtime.noindex/VideoScribeEngine"
   elif [ -x "$plugin_dir/runtime/VideoScribe.app/Contents/MacOS/VideoScribeAgent" ]; then
     app_path="$plugin_dir/runtime/VideoScribe.app"
   elif [ -x /Applications/VideoScribe.app/Contents/MacOS/VideoScribeAgent ]; then
@@ -13,9 +16,20 @@ if [ -z "$app_path" ]; then
     app_path="$HOME/Applications/VideoScribe.app"
   fi
 fi
-if [ -z "$app_path" ] || [ ! -x "$app_path/Contents/MacOS/VideoScribeAgent" ]; then
-  printf 'VideoScribe runtime missing. Install VideoScribe.app or run: python3 "%s/scripts/prepare-runtime.py"\n' "$plugin_dir" >&2
+if [ -n "$engine_path" ]; then
+  executable="$engine_path/VideoScribeAgent"
+  resources="$engine_path/Resources"
+elif [ -n "$app_path" ]; then
+  executable="$app_path/Contents/MacOS/VideoScribeAgent"
+  resources="$app_path/Contents/Resources"
+else
+  printf 'VideoScribe runtime missing. Run: python3 "%s/scripts/prepare-runtime.py"\n' "$plugin_dir" >&2
   exit 1
 fi
-export VIDEOSCRIBE_RESOURCES="$app_path/Contents/Resources"
-exec "$app_path/Contents/MacOS/VideoScribeAgent" mcp "$@"
+if [ ! -x "$executable" ]; then
+  printf 'VideoScribe executable missing or not executable.\n' >&2
+  exit 1
+fi
+export VIDEOSCRIBE_RESOURCES="$resources"
+export VIDEOSCRIBE_AGENT_EXECUTABLE="$executable"
+exec "$executable" mcp "$@"

@@ -6,7 +6,7 @@
 
 ## 安装
 
-也可从 [Releases](https://github.com/magiconline/videoscribe-agent-plugin/releases) 下载含精简运行程序的插件 ZIP，解压后直接导入插件目录；仍需安装下面的外部工具和模型，无需再运行运行包准备脚本。
+也可从 [Releases](https://github.com/magiconline/videoscribe-agent-plugin/releases) 下载含独立无界面运行核心的插件 ZIP，解压后直接导入插件目录；仍需安装下面的外部工具和模型，无需再运行运行包准备脚本。
 
 需要 Apple Silicon Mac、Python 3 和本地 Agent 的 stdio MCP 支持。源码目标 macOS 14，未逐一验证所有系统版本；不提供 Intel 发行包。
 
@@ -17,7 +17,7 @@ cd videoscribe-agent-plugin
 python3 scripts/prepare-runtime.py
 ```
 
-准备脚本下载 `runtime.json` 指定的 GUI 仓库发行包，校验固定 SHA-256，再解压到 `runtime/VideoScribe.app`。若已安装 GUI，可跳过下载，直接使用 `/Applications/VideoScribe.app`，或设置 `VIDEOSCRIBE_APP_PATH` 为应用的绝对路径。已有 ZIP 可用 `--archive /absolute/path/VideoScribe-macOS-arm64.zip` 离线安装。源码仓库不提交运行程序、模型或第三方工具。
+准备脚本下载 `runtime.json` 指定的 GUI 仓库发行包，校验固定 SHA-256，再仅安装 Agent 程序和资源到 `runtime.noindex/VideoScribeEngine`（不安装第二个 GUI 应用）。若已安装 GUI，可跳过下载，直接使用 `/Applications/VideoScribe.app`，或设置 `VIDEOSCRIBE_APP_PATH` 为应用的绝对路径。已有 ZIP 可用 `--archive /absolute/path/VideoScribe-macOS-arm64.zip` 离线安装。源码仓库不提交运行程序、模型或第三方工具。
 
 还需要 whisper.cpp 多语言模型。可在 GUI 设置中选择已有模型；无界面使用时设置 `VIDEOSCRIBE_MODEL_PATH`，或从 GUI 仓库运行 `scripts/download-model.sh` 下载带固定校验值的 base 模型到默认目录。运行包是临时签名，未做 Apple 公证。
 

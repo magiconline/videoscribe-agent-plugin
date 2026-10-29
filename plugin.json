@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "videoscribe",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Local macOS video downloading, subtitle extraction and offline transcription with persistent asynchronous MCP jobs.",
   "keywords": [
     "video",

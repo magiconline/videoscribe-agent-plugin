@@ -32,3 +32,22 @@ class ArchiveTests(unittest.TestCase):
 
     def test_preserves_executable(self):
         self.assertTrue(self.run_archive('VideoScribe.app/Contents/MacOS/VideoScribeAgent') & 0o111)
+
+
+class EngineTests(unittest.TestCase):
+    def test_engine_has_no_gui_bundle_and_keeps_worker_executable(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            app = root / 'VideoScribe.app'
+            binary = app / 'Contents/MacOS/VideoScribeAgent'
+            binary.parent.mkdir(parents=True)
+            binary.write_bytes(b'engine')
+            binary.chmod(0o755)
+            resources = app / 'Contents/Resources'
+            resources.mkdir()
+            (resources / 'AppIcon.icns').write_bytes(b'icon')
+            target = root / 'VideoScribeEngine'
+            installer.install_engine(app, target)
+            self.assertTrue((target / 'VideoScribeAgent').stat().st_mode & 0o111)
+            self.assertFalse(list(target.rglob('*.app')))
+            self.assertFalse((target / 'Resources/AppIcon.icns').exists())

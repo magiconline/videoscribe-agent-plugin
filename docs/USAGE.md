@@ -21,11 +21,12 @@
 
 | 变量 | 作用 |
 | --- | --- |
+| `VIDEOSCRIBE_ENGINE_PATH` | 无界面 VideoScribeEngine 的绝对路径 |
 | `VIDEOSCRIBE_APP_PATH` | VideoScribe.app 的绝对路径 |
 | `VIDEOSCRIBE_MODEL_PATH` | 多语言 Whisper 模型路径 |
 | `VIDEOSCRIBE_TOOL_DIR` | 优先搜索的外部工具目录 |
 | `VIDEOSCRIBE_DATA_DIR` | 隔离任务目录，适合测试 |
-| `PLUGIN_DATA` | 若客户端提供，启动器可从其 runtime 子目录寻找应用 |
+| `PLUGIN_DATA` | 若客户端提供，启动器可从其 runtime.noindex 子目录寻找应用 |
 
 默认数据位于当前用户 Application Support/VideoScribe。源码与安装目录可以公开，任务、日志、媒体和文字稿可能含私人内容，不能随仓库发布。系统代理按每个任务快照，失败重试应先检查网站权限和依赖，不要修改系统网络。
 

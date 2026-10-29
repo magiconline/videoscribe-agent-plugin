@@ -35,16 +35,30 @@ def extract_app(archive, destination):
                 if mode & 0o111:
                     target.chmod(0o755)
 
+def install_engine(app, target):
+    executable = app / 'Contents/MacOS/VideoScribeAgent'
+    if not os.access(executable, os.X_OK):
+        raise ValueError('Runtime executable missing or not executable')
+    target.mkdir(parents=True)
+    shutil.copy2(executable, target / 'VideoScribeAgent')
+    # CLI resources stay separate from the GUI bundle. Do not create an .app.
+    resources = app / 'Contents/Resources'
+    if resources.exists():
+        shutil.copytree(resources, target / 'Resources', symlinks=True,
+                        ignore=shutil.ignore_patterns('AppIcon.icns'))
+    else:
+        (target / 'Resources').mkdir()
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--app', type=Path, help='Use an existing VideoScribe.app instead of downloading')
     parser.add_argument('--archive', type=Path, help='Use the pinned release ZIP already downloaded')
-    parser.add_argument('--destination', type=Path, default=ROOT / 'runtime', help='Runtime parent directory')
+    parser.add_argument('--destination', type=Path, default=ROOT / 'runtime.noindex', help='Runtime parent directory')
     args = parser.parse_args()
     if args.app and args.archive:
         parser.error('Choose --app or --archive')
     destination = args.destination.expanduser().resolve()
-    target = destination / 'VideoScribe.app'
+    target = destination / 'VideoScribeEngine'
     if target.exists():
         raise SystemExit('Destination already exists; remove the generated runtime explicitly or choose another destination.')
     destination.mkdir(parents=True, exist_ok=True)
@@ -52,7 +66,7 @@ def main():
         app = args.app.expanduser().resolve()
         if not (app / 'Contents/MacOS/VideoScribeAgent').is_file():
             raise SystemExit('Input app has no VideoScribeAgent executable')
-        shutil.copytree(app, target, symlinks=True)
+        install_engine(app, target)
     else:
         config = json.loads((ROOT / 'runtime.json').read_text())
         with tempfile.TemporaryDirectory(prefix='videoscribe-runtime-') as folder:
@@ -72,8 +86,10 @@ def main():
             actual = hashlib.sha256(archive.read_bytes()).hexdigest()
             if actual != config['sha256']:
                 raise SystemExit('Runtime SHA-256 mismatch; archive rejected')
-            extract_app(archive, destination)
-    if not os.access(target / 'Contents/MacOS/VideoScribeAgent', os.X_OK):
+            extracted = Path(folder) / 'extracted'
+            extract_app(archive, extracted)
+            install_engine(extracted / 'VideoScribe.app', target)
+    if not os.access(target / 'VideoScribeAgent', os.X_OK):
         raise SystemExit('Runtime executable missing or not executable')
     print(f'Runtime prepared: {target}')
     print('Install the external tools and Whisper model described in README.md before transcription.')
